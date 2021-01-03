@@ -5,8 +5,10 @@
 def int_to_float_conv(n, sgn_len=1, exp_len=8, mant_len=23):
     """
     Converts an arbitrary precision Floating Point number.
-    Note: Since the calculations made by python inherently use floats, the accuracy is poor at high precision.
-    :param n: An unsigned integer of length `sgn_len` + `exp_len` + `mant_len` to be decoded as a float
+    Note: Since the calculations made by python inherently use floats, the
+        accuracy is poor at high precision.
+    :param n: An unsigned integer of length `sgn_len` + `exp_len` + `mant_len`
+        to be decoded as a float
     :param sgn_len: number of sign bits
     :param exp_len: number of exponent bits
     :param mant_len: number of mantissa bits
