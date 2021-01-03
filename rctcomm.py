@@ -172,13 +172,13 @@ class RctPowerDevice:
                 time out and if the crc-checks fail we also raise an error.
         """
         #init variables for communication
-        data_log_id = 1024
+        buffer_size = 1024
         fails = 0
         data = 0
         #try package request until it failed 5 times
         while fails < 5:
             self.__soc.send(package)
-            bin_response = self.__soc.recv(data_log_id)
+            bin_response = self.__soc.recv(buffer_size)
             for val in bin_response:
                 data = (data + val) << 8
             data >>= 8

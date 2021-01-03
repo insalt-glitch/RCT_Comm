@@ -2,7 +2,7 @@
 
 """
 
-def int_to_float_conv(n, sgn_len=1, exp_len=8, mant_len=23):
+def to_float_conv(n, sgn_len=1, exp_len=8, mant_len=23):
     """
     Converts an arbitrary precision Floating Point number.
     Note: Since the calculations made by python inherently use floats, the
