@@ -71,14 +71,10 @@ def _crc_check(response):
         check: A binary true if the crc matches and false if not.
     """
     cut = 0
-    #print("fullrepsonse: ", hex(response))
     for _ in range(len(hex(response)[4:])):
         cut = (cut << 4) + 0xF
-    #print("cut-off", hex(cut))
     crc = response & 0xFFFF
     bstream = response  & cut
-    #print("Bin-stream: ", bstream)
-    #print("crc:", crc)
     bstream >>= 16
     bstream <<= (len(hex(response)[4:-4]) % 2) * 4
     return crc == calc_crc(bstream)

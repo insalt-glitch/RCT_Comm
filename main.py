@@ -13,6 +13,7 @@ in binary:  0b0101100010110100
 from time import sleep
 from rctcomm import RctPowerDevice
 from data_handling import int_to_float_conv
+import id_catalog
 
 def main(tcp_ip, tcp_port):
     """Main method for this module.
@@ -23,16 +24,20 @@ def main(tcp_ip, tcp_port):
         tcp_ip: The IP of the device.
         tcp_port: The Port of the device.
     """
+    lines = id_catalog.read_file_lines("ID_table.txt")
+    data_ids = id_catalog.split_lines(lines, ',')
+    for id in data_ids:
+        print(id)
     #create MSG
     command     = 0x01
     data_log_id = 0xAFDD6CF
     #create device
     device = RctPowerDevice(tcp_ip, tcp_port)
     #get data and print it to cli
-    while True:
-        data = device.get(command, data_log_id)
-        print(int_to_float_conv(data))
-        sleep(1)
+    #while True:
+    data = device.get(command, data_log_id)
+    print(int_to_float_conv(data))
+    sleep(1)
 
 if __name__ == "__main__":
     TCP_IP   = "192.168.43.175"
