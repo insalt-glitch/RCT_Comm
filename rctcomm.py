@@ -1,16 +1,8 @@
-"""IP-Adresse: 192.168.43.136
+"""This module handels communiation for the rct device
 
-Note: The ID describes the requested information
-Command Examples:
-Start   Command(read)   length  ID (400F015b)        Checksum(CRC)
-0x2B    0x01            0x04    0x40 0x0F 0x01 0x5B    0x58 0xB4
-
-One Hex Value:0x2B0104400F015B58B4
-For CRC(no start and no crc):0x0104400F015B
-CRC:        0x58B4
-in binary:  0b0101100010110100
+This module provides an easy to use interface to communicate with the
+RctPowerStorage and perform crc-calculations.
 """
-
 import socket
 
 def calc_crc(bitstream):
