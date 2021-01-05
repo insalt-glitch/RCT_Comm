@@ -29,11 +29,12 @@ def main(tcp_ip, tcp_port):
     # create device
     device = RctPowerDevice(tcp_ip, tcp_port)
     # 256 is not working dont know why
-    requests = [314, 219, 667, 199, 160, 454, 478, 209, 46] #
+    requests = [314, 219, 667, 199, 160, 454, 478, 209, 46]
     for data_request in requests:
         # get data and print it to cli
         data = device.get(command, idtable[data_request][0])
-        data = data_conversion(data, idtable[data_request][1]) # PROBLEM does not support int and enum
+        # PROBLEM does not support int and enum
+        data = data_conversion(data, idtable[data_request][1])
         print(idtable[data_request][2] + ": {:}".format(data))
 
 

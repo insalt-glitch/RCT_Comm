@@ -2,6 +2,16 @@
 
 """
 def to_string_conv(data):
+    """Converts the from a int to a string.
+
+    This method assumes the input is a ascii string and converts it to a
+    default python string.
+
+    Args:
+        data: The input to the function. This has to be an integer.
+    Returns:
+        str_data: The input interpreted as a string.
+    """
     str_data = ''
     for _ in range(len(hex(data))//2):
         str_data += chr(data & 0xFF)
@@ -53,6 +63,15 @@ def to_float_conv(n, sgn_len=1, exp_len=8, mant_len=23):
 def data_conversion(data, d_type):
     """Data conversion from int to the specified type.
 
+    This function converts the input parameter "data" into the given d_type
+    which can be string, float, uint8, uint16, uint32, boolean.
+
+    Args:
+        data: The input (integer) that is to be converted into the proper
+            format.
+        d_type: The type as a string that the input is to be converted into.
+    Returns:
+        data: The given input in the proper format.
     """
     if d_type == 'string':
         data = to_string_conv(data)
