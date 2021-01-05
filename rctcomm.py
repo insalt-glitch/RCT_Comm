@@ -9,8 +9,8 @@ def calc_crc(bitstream):
     """Calculate the CRC for the given input (int).
 
     We Calculate the CRC for the given integer. We use CRC-16 and initilize
-    to 0xFFFF. In case of an odd number of bytes the userhas to add a padding
-    at the end.
+    to 0xFFFF. In case of an odd number of bytes the necessary padding will be
+    added automatically.
 
     Args:
         bitstream: The integer represting the binary to perform the crc on.
@@ -18,6 +18,8 @@ def calc_crc(bitstream):
         crc: The integer resulting from the crc calculation.
 
     """
+    # add padding
+    bitstream <<= ((len(hex(bitstream))//2)%2)*8
     # initilize crc
     crc = 0xFFFF
     # get bitstream length in bytes
@@ -126,7 +128,7 @@ class RctPowerDevice:
         self.__port = port
         # generate a socket of later use
         self.__soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        #connect send and recieve
+        # connect send and recieve
         self.__soc.connect((self.__ip, self.__port))
 
     def __del__(self):
@@ -171,12 +173,12 @@ class RctPowerDevice:
             Connection-Error: If no connection can be estabished the method will
                 time out and if the crc-checks fail we also raise an error.
         """
-        #init variables for communication
+        # init variables for communication
         buffer_size = 1024
         fails = 0
         data = 0
-        #try package request until it failed 5 times
-        while fails < 5:
+        # try package request until it failed 5 times
+        while fails < 50:
             self.__soc.send(package)
             bin_response = self.__soc.recv(buffer_size)
             for val in bin_response:
@@ -186,5 +188,5 @@ class RctPowerDevice:
                 break
             fails += 1
             data=0
-        assert (not fails == 5), "Could not get data"
+        assert (not fails == 50), "Could not get data"
         return data

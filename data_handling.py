@@ -1,6 +1,12 @@
 """Module for handling the conversions of different types that come from the device
 
 """
+def to_string_conv(data):
+    str_data = ''
+    for _ in range(len(hex(data))//2):
+        str_data += chr(data & 0xFF)
+        data >>= 8
+    return str_data
 
 def to_float_conv(n, sgn_len=1, exp_len=8, mant_len=23):
     """
@@ -43,3 +49,17 @@ def to_float_conv(n, sgn_len=1, exp_len=8, mant_len=23):
             mant_mult += 1 / (2 ** (mant_len - b))
 
     return sign_mult * (2 ** exponent) * mant_mult
+
+def data_conversion(data, d_type):
+    """Data conversion from int to the specified type.
+
+    """
+    if d_type == 'string':
+        data = to_string_conv(data)
+    elif d_type == 'float':
+        data = to_float_conv(data)
+    elif 'uint' in d_type:
+        pass
+    elif d_type == 'bool':
+        data = bool(data)
+    return data

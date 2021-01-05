@@ -29,7 +29,7 @@ def make_table(file):
     data_ids = split_lines(lines, ',')
     data_ids = [int(x, base=16) for x in data_ids]
     # get the type for each id
-    types = split_lines(lines, '|', 1, start=3)
+    types = split_lines(lines, '|', 1, start=3, end=-1)
     # get the description
     descriptions = split_lines(lines, '|', 2, end=-1)
     return list(zip(data_ids, types, descriptions))
