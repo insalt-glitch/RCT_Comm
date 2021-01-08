@@ -4,7 +4,7 @@ This module provides an easy to use interface to communicate with the
 RctPowerStorage and perform crc-calculations.
 """
 import socket
-
+from time import sleep
 def calc_crc(bitstream):
     """Calculate the CRC for the given input (int).
 
@@ -153,7 +153,8 @@ class RctPowerDevice:
             id: The data_id for the request. It is a 4 byte hex-value.
         """
         # generate package
-        package = bytes.fromhex(_gen_request(command_byte, data_log_id))
+        package = _gen_request(command_byte, data_log_id)
+        package = bytes.fromhex(package)
         data = self.__recieve_data(package)
         return _strip_data(data)
 
@@ -178,15 +179,26 @@ class RctPowerDevice:
         fails = 0
         data = 0
         # try package request until it failed 5 times
-        while fails < 50:
+        while fails < 5:
             self.__soc.send(package)
             bin_response = self.__soc.recv(buffer_size)
             for val in bin_response:
                 data = (data + val) << 8
             data >>= 8
+            #print("Recieved data:", hex(data))
             if _crc_check(data):
                 break
             fails += 1
-            data=0
-        assert (not fails == 50), "Could not get data"
+            data = 0
+        if fails == 5:
+            raise ConnectionError("No connection possible")
         return data
+
+    def renew_socket(self):
+        """ In case of connection problems with the device we renew the socket.
+        """
+        sleep(10)
+        self.__soc.close()
+        sleep(10)
+        self.__soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__soc.connect((self.__ip, self.__port))
