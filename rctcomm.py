@@ -5,6 +5,8 @@ RctPowerStorage and perform crc-calculations.
 """
 import socket
 from time import sleep
+
+
 def calc_crc(bitstream):
     """Calculate the CRC for the given input (int).
 
@@ -75,7 +77,9 @@ def _crc_check(response):
     cut = 0
     for _ in range(len(hex(response)[4:])):
         cut = (cut << 4) + 0xF
+    # save the recieved checksum
     crc = response & 0xFFFF
+    # remove parts of ther requests that dont belong to the crc
     bstream = response  & cut
     bstream >>= 16
     bstream <<= (len(hex(response)[4:-4]) % 2) * 4
@@ -143,7 +147,7 @@ class RctPowerDevice:
         del self.__soc
 
     def get(self, command_byte, data_log_id):
-        """Used to get request data from the device.
+        """Used to request data from the device.
 
         This method communicates with the device via tcp and requests the data
         specified by the parameter id.
@@ -175,30 +179,33 @@ class RctPowerDevice:
                 time out and if the crc-checks fail we also raise an error.
         """
         # init variables for communication
-        buffer_size = 1024
+        buffer_size = 128
         fails = 0
-        data = 0
         # try package request until it failed 5 times
         while fails < 5:
+            data = 0
             self.__soc.send(package)
             bin_response = self.__soc.recv(buffer_size)
+            # convert the byte obj back to an integer
             for val in bin_response:
                 data = (data + val) << 8
             data >>= 8
-            #print("Recieved data:", hex(data))
+            # check for error
             if _crc_check(data):
-                break
+                return data
+            # there was an error and we try again
             fails += 1
-            data = 0
+
         if fails == 5:
             raise ConnectionError("No connection possible")
-        return data
 
     def renew_socket(self):
         """ In case of connection problems with the device we renew the socket.
         """
+        # wait to make sure connection can be closed properly
         sleep(10)
         self.__soc.close()
+        # wait before esablishing a new connection on a new socket
         sleep(10)
         self.__soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__soc.connect((self.__ip, self.__port))
